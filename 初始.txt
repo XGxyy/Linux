@@ -1,0 +1,15 @@
+目录命令: ls pwd mkdir rmdir rm cp mv cd
+文件命令: touch cat tac(按行逆序打印) more less head(默认显示前十行) tail
+压缩命令:zip/unzip   gzip/gunzip   bzip2/bunzip2    
+               tar -c打包 -x解包 -v显示详细的打包解包信息 
+                    -z打包解包的同时进行gzip形式的压缩解压缩 
+                    -j打包解包的同时进行bzip2形式的压缩解压缩 -f指定一个包名称
+时间命令: cal date 
+匹配查找命令:grep 在一个文件内容中匹配有指定字符串的行(-i可忽略大小写 -L对指定目录匹配)
+                     find 查找文件
+
+其他: man su  |(管道符命令,连接两个命令将前面的输出结果作为后面命令的输入处理)
+        >>(追加)     >(清空原有,再添加)(重定向符号)
+        bc计算器
+
+shell原理:  保护操作系统内核,链接用户与操作系统进行交互        

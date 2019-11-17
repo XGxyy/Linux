@@ -1,0 +1,24 @@
+vector矢量容器(动态顺序存储器,序列容器):
+capacity每次扩容之前的百分之五十
+
+
+Linux
+基础指令:
+tab, ctrl+c(中断当前操作)
+1.目录:
+.是当前路径 
+..是上层路径   
+/是绝对路径   
+(./可忽略)Workspace相对路径
+ls列出子目录和子文件,pwd,mkdir,redir,rm,cp.mv,cd
+2.文件:
+touch ①创建空文件,②修改文件时间信息
+cat查看文件内容(打印到终端)
+more分页展示文件内容
+less分页展示并进行内容匹配
+head打印文件前n行内容(用-n指定)
+tail动态刷新文件末尾
+gzip压缩文件
+gunzip解压缩
+zip/unzip/bzip2/bunzip2
+tar解压和压缩总结合
