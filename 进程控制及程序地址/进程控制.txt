@@ -1,0 +1,86 @@
+进程控制: 进程创建/进程终止/进程等待/程序替换
+
+一.进程创建:
+  创建一个进程的流程: 创建一个pcb(pid_t pid = fork())
+	->复制父进程中的信息(clone, 写时拷贝技术)
+  pid_t vfork()---创建一个子进程
+	调用clone, 创建pcb, 复制父进程, 但是父子进程共用同一个虚拟地址空间(防止调用栈混乱)
+	
+	**vfork是一个阻塞函数, 父进程创建子进程后, 这个vfork函数在父进程中
+	并不会立即返回, 会阻塞直到子进程exit退出或者程序替换, 才会返回(意味
+	父进程直到子进程退出或程序替换后才会运行)
+
+二.进程终止: 退出一个进程
+	异常退出: 程序运行过程中异常崩溃, 程序没有运行完毕
+	正常退出: 程序运行完毕--(是否结果符合预期)
+  如何终止一个进程: 
+	1.main函数中的return
+	2.exit(int status)---库函数
+	3._exit(int status)---系统调用接口(退出时不会刷新缓冲区)
+三.进程等待: 等待一个子进程的退出, 获取子进程的返回值, 并释放子进程资源, 防止出现僵尸进程
+  等待操作:
+	1. pid_t wait(int* status): 阻塞等待任意一个子进程退出, 将返回值放入status中, 返回子进程的pid
+	(阻塞函数:为了完成一个功能, 发起调用, 若当前不具备完成条件, 则等待, 直到条件具备完成功能后
+		调用返回;
+	 非阻塞: 为了完成一个功能, 发起调用, 若当前不具备完成条件, 则立即报错并返回
+	 阻塞与非阻塞的区别: 调用是否立即返回
+	 非阻塞通常需要循环调用)
+	2.pid_t waitpid(pid_t pid, int* status, int options): 等待指定子进程/任意一个子进程退出, 返回值
+		放到status中, options为0时,则函数默认阻塞; 若options为WNOHANG, 则将waitpid设
+		置为非阻塞, 意味着没有子进程退出则立即返回.  有三个返回值: -1表示出错, 0表示没有子
+		进程退出, >0表示推出子进程pid
+
+	 	**status返回值有32位,但只有低16位有效, 其中又分3位前8位存的是返回值(retval),
+		中间一位是core dump(核心转储)用来保存程序的运行信息后7位存的是异常值(excaption)
+		, 保存的是一个异常退出信号制, 若为0,则正常退出,非0, 进程因为一个异常而退出, 则retval
+		就不能作为进程任务处理结果的判断标准
+		得到正确status的操作方法: (status >> 8) & 0xff
+四.程序替换: 替换一个进程正在运行的程序
+  替换一个pcb映射在内存中的代码数据, 说白了就是让这个进程运行另一个程序
+  ***exec函数族: 程序替换之后不会在运行原代码
+	1.int execl(const char* path, const char* arg, ...参数信息, null结尾)
+	2.int execlp(const char* file, const char* arg, ...同上)//由父类决定
+	3.int execle(const char* path, const char* arg, ..., char* const env[])//自己决定环境变量
+    带p和不带p的区别: 加载的新程序名称是否需要带路径,  带p则不需要, 只要文件名即可, 但是文件必须放置
+	在指定路径下PATH
+    带e和不带e的区别: 是否有我么自己来给新程序赋予环境变量
+	4.int execv(const char* path, char* const argv[])
+	5.int execvp(const char* file, char* const argv[])
+	6.int execvpe(const char* path, char* const argv[], char* const env[])
+    l和v的区别在于运行参数的赋值方式不同
+	**这个是系统提供的,上面的都是封装的库函数**
+	7.int execve(const char* path,  char* const argv[], char* const env[])
+五. 自主实现一个minishell
+  shell就是一个命令行解释器---
+	1.等待用户的标准输入(ls -l -a)
+	2.对用户输入进行解析, 得到程序名称(ls)以及参数信息(-l/-a)
+	3.创建子进程, 在子进程中进行程序替换
+	4.shell程序需要等待子进程退出
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
